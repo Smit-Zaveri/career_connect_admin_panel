@@ -318,7 +318,7 @@ const Login: React.FC = () => {
             </p>
             <p>
               <span className="font-semibold">Counselor:</span>{" "}
-              smitzaveri123@gmail.com / counselor123
+              smitzaveri123@gmail.com / smit5364
             </p>
             <p className="mt-2">
               Note: The system automatically detects if you're an admin or a
