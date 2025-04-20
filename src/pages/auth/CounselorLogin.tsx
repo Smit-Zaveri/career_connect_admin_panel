@@ -99,7 +99,7 @@ const CounselorLogin: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full rounded-md border border-neutral-300 bg-white px-4 py-2 text-neutral-900 focus:border-primary-500 focus:outline-none focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500 sm:text-sm"
-                  placeholder="counselor@example.com"
+                  placeholder="smitzaveri123@gmail.com"
                 />
               </div>
 

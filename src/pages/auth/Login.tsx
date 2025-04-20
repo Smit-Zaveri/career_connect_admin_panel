@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useForm } from 'react-hook-form';
-import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useForm } from "react-hook-form";
+import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface LoginFormData {
   email: string;
@@ -20,7 +20,11 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showTwoFactor, setShowTwoFactor] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>();
 
   const onSubmit = async (data: LoginFormData) => {
     setError(null);
@@ -30,7 +34,7 @@ const Login: React.FC = () => {
       if (showTwoFactor) {
         // In a real app, you would validate the 2FA code here
         // For this demo, we'll just simulate success after a delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setShowTwoFactor(false);
       } else {
         // The login function will automatically detect user type and redirect accordingly
@@ -82,13 +86,21 @@ const Login: React.FC = () => {
           <motion.div
             className="rounded-md bg-error-50 p-4 dark:bg-error-900/20"
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             transition={{ duration: 0.3 }}
           >
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-error-400 dark:text-error-500" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                <svg
+                  className="h-5 w-5 text-error-400 dark:text-error-500"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div className="ml-3">
@@ -109,19 +121,22 @@ const Login: React.FC = () => {
           >
             {showTwoFactor ? (
               <div>
-                <label htmlFor="twoFactorCode" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                <label
+                  htmlFor="twoFactorCode"
+                  className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+                >
                   Verification Code
                 </label>
                 <div className="mt-1">
                   <div className="relative">
                     <input
                       id="twoFactorCode"
-                      {...register('twoFactorCode', {
-                        required: 'Verification code is required',
+                      {...register("twoFactorCode", {
+                        required: "Verification code is required",
                         pattern: {
                           value: /^[0-9]{6}$/,
-                          message: 'Code must be 6 digits'
-                        }
+                          message: "Code must be 6 digits",
+                        },
                       })}
                       type="text"
                       autoComplete="one-time-code"
@@ -131,7 +146,9 @@ const Login: React.FC = () => {
                     />
                   </div>
                   {errors.twoFactorCode && (
-                    <p className="mt-2 text-sm text-error-600 dark:text-error-400">{errors.twoFactorCode.message}</p>
+                    <p className="mt-2 text-sm text-error-600 dark:text-error-400">
+                      {errors.twoFactorCode.message}
+                    </p>
                   )}
                 </div>
                 <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
@@ -141,7 +158,10 @@ const Login: React.FC = () => {
             ) : (
               <>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+                  >
                     Email address
                   </label>
                   <div className="mt-1">
@@ -151,12 +171,12 @@ const Login: React.FC = () => {
                       </div>
                       <input
                         id="email"
-                        {...register('email', {
-                          required: 'Email is required',
+                        {...register("email", {
+                          required: "Email is required",
                           pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: 'Invalid email address'
-                          }
+                            message: "Invalid email address",
+                          },
                         })}
                         type="email"
                         autoComplete="email"
@@ -165,13 +185,18 @@ const Login: React.FC = () => {
                       />
                     </div>
                     {errors.email && (
-                      <p className="mt-2 text-sm text-error-600 dark:text-error-400">{errors.email.message}</p>
+                      <p className="mt-2 text-sm text-error-600 dark:text-error-400">
+                        {errors.email.message}
+                      </p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+                  >
                     Password
                   </label>
                   <div className="mt-1">
@@ -181,8 +206,10 @@ const Login: React.FC = () => {
                       </div>
                       <input
                         id="password"
-                        {...register('password', { required: 'Password is required' })}
-                        type={showPassword ? 'text' : 'password'}
+                        {...register("password", {
+                          required: "Password is required",
+                        })}
+                        type={showPassword ? "text" : "password"}
                         autoComplete="current-password"
                         className="block w-full rounded-md border-neutral-300 py-3 pl-10 pr-10 focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                         placeholder="Enter your password"
@@ -200,7 +227,9 @@ const Login: React.FC = () => {
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="mt-2 text-sm text-error-600 dark:text-error-400">{errors.password.message}</p>
+                      <p className="mt-2 text-sm text-error-600 dark:text-error-400">
+                        {errors.password.message}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -218,17 +247,23 @@ const Login: React.FC = () => {
               <div className="flex items-center">
                 <input
                   id="remember-me"
-                  {...register('rememberMe')}
+                  {...register("rememberMe")}
                   type="checkbox"
                   className="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-800"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-neutral-700 dark:text-neutral-300">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-neutral-700 dark:text-neutral-300"
+                >
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                <a
+                  href="#"
+                  className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
+                >
                   Forgot your password?
                 </a>
               </div>
@@ -246,7 +281,7 @@ const Login: React.FC = () => {
                 disabled={isLoading}
                 className="group relative flex w-full justify-center rounded-md border border-transparent bg-primary-600 py-3 text-sm font-medium text-white transition-all hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-70 dark:bg-primary-700 dark:hover:bg-primary-600"
               >
-                {isLoading ? 'Verifying...' : 'Verify Code'}
+                {isLoading ? "Verifying..." : "Verify Code"}
               </button>
             ) : (
               <div className="space-y-4">
@@ -255,7 +290,7 @@ const Login: React.FC = () => {
                   disabled={isLoading}
                   className="group relative flex w-full justify-center rounded-md border border-transparent bg-primary-600 py-3 text-sm font-medium text-white transition-all hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-70 dark:bg-primary-700 dark:hover:bg-primary-600"
                 >
-                  {isLoading ? 'Signing in...' : 'Sign in'}
+                  {isLoading ? "Signing in..." : "Sign in"}
                 </button>
                 <button
                   type="button"
@@ -278,13 +313,16 @@ const Login: React.FC = () => {
           <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
             <p>Demo credentials:</p>
             <p className="mt-1">
-              <span className="font-semibold">Admin:</span> admin@example.com / admin123
+              <span className="font-semibold">Admin:</span> admin@example.com /
+              admin123
             </p>
             <p>
-              <span className="font-semibold">Counselor:</span> counselor@example.com / counselor123
+              <span className="font-semibold">Counselor:</span>{" "}
+              smitzaveri123@gmail.com / counselor123
             </p>
             <p className="mt-2">
-              Note: The system automatically detects if you're an admin or a counselor
+              Note: The system automatically detects if you're an admin or a
+              counselor
             </p>
           </div>
         </motion.div>

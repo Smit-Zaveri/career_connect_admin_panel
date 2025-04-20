@@ -449,7 +449,7 @@ const CounselorDashboard: React.FC = () => {
                 {user?.name || "Counselor Name"}
               </h3>
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                {user?.email || "counselor@example.com"}
+                {user?.email || "smitzaveri123@gmail.com"}
               </p>
               <Link
                 to="/profile"

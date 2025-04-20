@@ -21,7 +21,6 @@ import CounselorBookings from "./pages/counselors/CounselorBookings";
 import CounselorMeetings from "./pages/counselors/CounselorMeetings";
 import Settings from "./pages/settings/Settings";
 import Profile from "./pages/profile/Profile";
-import SearchResults from "./pages/search/SearchResults";
 import { useAuth } from "./context/AuthContext";
 
 // Protected route component
@@ -78,8 +77,6 @@ function App() {
       title = "Login";
     } else if (path.includes("/counselor-dashboard")) {
       title = "Counselor Dashboard";
-    } else if (path.includes("/search")) {
-      title = "Search Results";
     }
 
     document.title = title;
@@ -219,12 +216,7 @@ function App() {
               <ProtectedRoute element={<Profile />} requiredRole="any" />
             }
           />
-          <Route
-            path="search"
-            element={
-              <ProtectedRoute element={<SearchResults />} requiredRole="any" />
-            }
-          />
+          {/* Search route removed to fix 404 error */}
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />
