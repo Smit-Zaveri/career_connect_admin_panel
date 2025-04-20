@@ -100,42 +100,56 @@ export async function getCounselors(
   counselors: Counselor[];
   lastVisible: DocumentSnapshot | null;
 }> {
-  const counselorsRef = collection(db, "counselors");
+  try {
+    const counselorsRef = collection(db, "counselors");
 
-  let q = query(counselorsRef, orderBy("createdAt", "desc"), limit(pageSize));
+    // Start with a basic query
+    let q = query(counselorsRef);
 
-  // Apply filters if provided
-  Object.entries(filters).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      if (key === "specialization") {
-        q = query(q, where(key, "==", value));
-      }
-      if (key === "status") {
-        q = query(q, where(key, "==", value));
-      }
-      if (key === "isVerified") {
-        q = query(q, where(key, "==", value));
-      }
+    // Apply filters one by one to prevent composite index issues
+    // Note: We can only use one inequality filter per query
+    let hasInequality = false;
+
+    // Apply equality filters first (these don't cause index issues)
+    if (filters.status && filters.status !== "") {
+      q = query(q, where("status", "==", filters.status));
     }
-  });
 
-  // Apply pagination if lastDoc is provided
-  if (lastDoc) {
-    q = query(q, startAfter(lastDoc));
+    if (filters.specialization && filters.specialization !== "") {
+      q = query(q, where("specialization", "==", filters.specialization));
+    }
+
+    if (filters.isVerified !== undefined && filters.isVerified !== null) {
+      q = query(q, where("isVerified", "==", filters.isVerified));
+    }
+
+    // Add ordering - always order by createdAt for consistency
+    q = query(q, orderBy("createdAt", "desc"));
+
+    // Apply pagination if lastDoc is provided
+    if (lastDoc) {
+      q = query(q, startAfter(lastDoc));
+    }
+
+    // Apply page size limit
+    q = query(q, limit(pageSize));
+
+    const snapshot = await getDocs(q);
+
+    // Get the last visible document
+    const lastVisible =
+      snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
+
+    const counselors = snapshot.docs.map(convertFirebaseCounselor);
+
+    return {
+      counselors,
+      lastVisible,
+    };
+  } catch (error) {
+    console.error("Error getting counselors:", error);
+    throw error;
   }
-
-  const snapshot = await getDocs(q);
-
-  // Get the last visible document
-  const lastVisible =
-    snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
-
-  const counselors = snapshot.docs.map(convertFirebaseCounselor);
-
-  return {
-    counselors,
-    lastVisible,
-  };
 }
 
 // Get counselor by ID

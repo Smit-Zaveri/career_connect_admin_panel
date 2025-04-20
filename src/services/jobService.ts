@@ -57,6 +57,18 @@ export const getJobs = async (filters?: any, pageSize = 10, lastDoc?: any) => {
       if (filters.tag) {
         constraints.push(where("tags", "array-contains", filters.tag));
       }
+
+      // Handle active/expired job filters
+      if (filters.isActive) {
+        // Active jobs have expiry_date in the future or no expiry_date
+        const now = Timestamp.fromDate(new Date());
+        constraints.push(where("expiry_date", ">", now));
+      }
+      if (filters.isExpired) {
+        // Expired jobs have expiry_date in the past
+        const now = Timestamp.fromDate(new Date());
+        constraints.push(where("expiry_date", "<=", now));
+      }
     }
 
     // Add default sorting

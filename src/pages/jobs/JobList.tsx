@@ -69,7 +69,6 @@ const JobList: React.FC<JobListProps> = () => {
 
       if (filterStatus !== "all") {
         if (filterStatus === "active") {
-          // For active jobs, we check if expiry_date is in the future
           filters.isActive = true;
         } else if (filterStatus === "expired") {
           filters.isExpired = true;
