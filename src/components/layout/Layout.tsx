@@ -31,27 +31,25 @@ const Layout: React.FC = () => {
       {/* Mobile Sidebar with backdrop */}
       <AnimatePresence>
         {isMobileSidebarOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-20 bg-black"
-              onClick={toggleMobileSidebar}
-            />
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ duration: 0.2 }}
-              className="fixed left-0 top-0 z-30 h-full w-64 md:hidden"
-            >
-              <Sidebar isCollapsed={false} setIsCollapsed={() => {}} />
-            </motion.div>
-          </>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-20 bg-black"
+            onClick={toggleMobileSidebar}
+          />
         )}
       </AnimatePresence>
+
+      {/* Mobile Sidebar - pass isMobileSidebarOpen to control its visibility */}
+      <div className="md:hidden">
+        <Sidebar
+          isCollapsed={false}
+          setIsCollapsed={() => {}}
+          isMobileMenuOpen={isMobileSidebarOpen}
+        />
+      </div>
 
       {/* Main content area with dynamic left padding and width for sidebar on desktop */}
       <div

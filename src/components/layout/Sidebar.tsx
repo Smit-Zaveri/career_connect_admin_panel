@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
@@ -11,7 +11,6 @@ import {
   User,
   LogOut,
   Menu,
-  X,
   MessageSquare,
   Video,
 } from "lucide-react";
@@ -26,13 +25,14 @@ interface NavItem {
 interface SidebarProps {
   isCollapsed?: boolean;
   setIsCollapsed?: (collapsed: boolean) => void;
+  isMobileMenuOpen?: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed = false,
   setIsCollapsed = () => {},
+  isMobileMenuOpen = false,
 }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { logout, isAdmin, isCounselor } = useAuth();
   const location = useLocation();
 
@@ -89,17 +89,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     return true;
   });
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
-
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
-  };
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const handleLogout = () => {
@@ -110,31 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <div className="fixed top-4 left-4 z-50 block lg:hidden">
-        <button
-          onClick={toggleMobileMenu}
-          className="rounded-md bg-primary-600 p-2 text-white shadow-lg transition hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600"
-          aria-label="Menu"
-        >
-          {isMobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile Sidebar */}
-      <div
-        className={`fixed inset-0 z-40 transform bg-black bg-opacity-50 transition-opacity duration-300 lg:hidden ${
-          isMobileMenuOpen
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
-        }`}
-        onClick={toggleMobileMenu}
-      ></div>
-
+      {/* Mobile Sidebar - controlled by isMobileMenuOpen prop from Layout */}
       <div
         className={`fixed top-0 left-0 z-40 h-full w-64 transform overflow-y-auto bg-white shadow-lg transition-transform duration-300 dark:bg-neutral-900 lg:hidden ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
