@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* React DatePicker custom styling */
+.react-datepicker {
+    font-family: inherit;
+    border: 1px solid var(--neutral-300);
+    border-radius: 0.375rem;
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dark .react-datepicker {
+    background-color: #1f2937;
+    /* Darker background for dark mode */
+    border-color: var(--neutral-700);
+}
+
+.react-datepicker__header {
+    background-color: #f9fafb;
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.dark .react-datepicker__header {
+    background-color: #374151;
+    /* Darker header background for dark mode */
+    border-bottom-color: var(--neutral-600);
+}
+
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header,
+.react-datepicker__day-name {
+    color: #111827;
+}
+
+.dark .react-datepicker__current-month,
+.dark .react-datepicker-time__header,
+.dark .react-datepicker-year-header,
+.dark .react-datepicker__day-name {
+    color: #f9fafb;
+}
+
+.react-datepicker__day {
+    color: #374151;
+}
+
+.dark .react-datepicker__day {
+    color: #d1d5db;
+}
+
+.react-datepicker__day:hover {
+    background-color: #f3f4f6;
+}
+
+.dark .react-datepicker__day:hover {
+    background-color: #4b5563;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+    background-color: #2563eb !important;
+    color: white !important;
+}
+
+.dark .react-datepicker__day--selected,
+.dark .react-datepicker__day--keyboard-selected {
+    background-color: #3b82f6 !important;
+}
+
+.react-datepicker__day--disabled {
+    color: #9ca3af;
+}
+
+.dark .react-datepicker__day--disabled {
+    color: #6b7280;
+}
+
+.react-datepicker__navigation {
+    top: 8px;
+}
+
+.react-datepicker__navigation-icon::before {
+    border-color: #6b7280;
+}
+
+.dark .react-datepicker__navigation-icon::before {
+    border-color: #9ca3af;
+}
+
+.react-datepicker__input-container .react-datepicker__calendar-icon {
+    padding: 0.5rem 0.75rem;
+}
+
+/* Add a Calendar icon to the DatePicker input */
+.react-datepicker-wrapper {
+    display: block;
+    width: 100%;
+    position: relative;
+}
+
+.react-datepicker__input-container::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.react-datepicker__triangle {
+    display: none;
+}
+
+/* Fix for any transparency issues */
+.react-datepicker-popper {
+    z-index: 100;
+    background-color: transparent;
+}
+
+/* Make DatePicker input opaque */
+input.react-datepicker__input-container,
+.react-datepicker__input-container input {
+    background-color: white !important;
+}
+
+.dark input.react-datepicker__input-container,
+.dark .react-datepicker__input-container input {
+    background-color: #1f2937 !important;
+}
