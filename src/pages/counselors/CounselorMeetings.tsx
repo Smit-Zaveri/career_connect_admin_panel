@@ -6,9 +6,10 @@ import {
   cancelBooking,
 } from "../../services/counselorService";
 import { Link } from "react-router-dom";
-import { Calendar, Clock, Globe, RefreshCw, X, User } from "lucide-react";
+import { Globe, RefreshCw, X } from "lucide-react";
 
 interface Meeting {
+  id?: string;
   counselorId: string;
   counselorName: string;
   counselorPhoto?: string;
@@ -28,15 +29,17 @@ const CounselorMeetings: React.FC = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    fetchMeetings();
-  }, [user?.uid]);
+    if (user?.id) {
+      fetchMeetings();
+    }
+  }, [user?.id]);
 
   const fetchMeetings = async () => {
-    if (!user?.uid) return;
+    if (!user?.id) return;
 
     try {
       setLoading(true);
-      const bookings = await getUserUpcomingBookings(user.uid);
+      const bookings = await getUserUpcomingBookings(user.id);
       setMeetings(bookings);
     } catch (error) {
       console.error("Error fetching meetings:", error);
@@ -64,7 +67,7 @@ const CounselorMeetings: React.FC = () => {
   };
 
   const handleCancelBooking = async (meeting: Meeting) => {
-    if (!user?.uid) return;
+    if (!user?.id || !meeting.counselorId) return;
 
     // Format date as YYYY-MM-DD
     const dateObj = meeting.date.toDate();
@@ -80,7 +83,7 @@ const CounselorMeetings: React.FC = () => {
         meeting.counselorId,
         dateStr,
         timeSlot,
-        user.uid
+        user.id
       );
 
       if (result.success) {
