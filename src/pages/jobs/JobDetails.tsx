@@ -140,10 +140,6 @@ const JobDetails: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <button className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700">
-              <Share2 className="mr-2 h-4 w-4" />
-              <span>Share</span>
-            </button>
             <Link
               to={`/jobs/edit/${job.job_id}`}
               className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600"
@@ -456,25 +452,6 @@ const JobDetails: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {isAdmin && (
-              <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800">
-                <h3 className="text-base font-medium text-neutral-900 dark:text-white">
-                  Admin Actions
-                </h3>
-                <div className="mt-4 space-y-3">
-                  <button className="w-full rounded-md bg-primary-50 py-2 text-center text-sm font-medium text-primary-700 hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50">
-                    {job.isPopular ? "Remove Popular Flag" : "Mark as Popular"}
-                  </button>
-                  <button className="w-full rounded-md bg-warning-50 py-2 text-center text-sm font-medium text-warning-700 hover:bg-warning-100 dark:bg-warning-900/30 dark:text-warning-400 dark:hover:bg-warning-900/50">
-                    Extend Expiry Date
-                  </button>
-                  <button className="w-full rounded-md bg-error-50 py-2 text-center text-sm font-medium text-error-700 hover:bg-error-100 dark:bg-error-900/30 dark:text-error-400 dark:hover:bg-error-900/50">
-                    Delete Job Post
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </motion.div>
       </div>

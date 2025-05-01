@@ -403,11 +403,7 @@ const Dashboard: React.FC = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
-          >
-            <button className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600">
-              <span>Generate Report</span>
-            </button>
-          </motion.div>
+          ></motion.div>
         )}
       </div>
 

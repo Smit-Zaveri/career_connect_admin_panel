@@ -129,44 +129,92 @@ const Settings: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800">
-            <nav className="space-y-1">
-              <a
-                href="#appearance"
-                className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-primary-600 bg-primary-50 dark:text-primary-400 dark:bg-primary-900/20"
+          <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800 sticky top-5 transition-all duration-300 hover:shadow-md">
+            <h3 className="mb-4 text-sm font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+              Settings Menu
+            </h3>
+            <nav className="space-y-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  const section = document.getElementById("appearance");
+                  if (section) {
+                    section.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                }}
+                className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 text-primary-600 bg-primary-50 dark:text-primary-400 dark:bg-primary-900/20 hover:shadow-sm"
               >
                 <Moon className="mr-3 h-5 w-5" />
                 Appearance
-              </a>
-              <a
-                href="#notifications"
-                className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const section = document.getElementById("notifications");
+                  if (section) {
+                    section.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                }}
+                className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 text-neutral-700 hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-700"
               >
                 <Bell className="mr-3 h-5 w-5" />
                 Notifications
-              </a>
-              <a
-                href="#privacy"
-                className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const section = document.getElementById("privacy");
+                  if (section) {
+                    section.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                }}
+                className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 text-neutral-700 hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-700"
               >
                 <Shield className="mr-3 h-5 w-5" />
                 Privacy & Security
-              </a>
-              <a
-                href="#app"
-                className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const section = document.getElementById("app");
+                  if (section) {
+                    section.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                }}
+                className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 text-neutral-700 hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-700"
               >
                 <Globe className="mr-3 h-5 w-5" />
                 App Settings
-              </a>
+              </button>
               <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700">
-                <a
-                  href="#danger"
-                  className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-error-600 hover:bg-error-50 dark:text-error-400 dark:hover:bg-error-900/20"
+                <button
+                  type="button"
+                  onClick={() => {
+                    const section = document.getElementById("danger");
+                    if (section) {
+                      section.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }
+                  }}
+                  className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 text-error-600 hover:bg-error-50 hover:shadow-sm dark:text-error-400 dark:hover:bg-error-900/20"
                 >
                   <AlertTriangle className="mr-3 h-5 w-5" />
                   Danger Zone
-                </a>
+                </button>
               </div>
             </nav>
           </div>
@@ -182,13 +230,12 @@ const Settings: React.FC = () => {
           {/* Appearance section */}
           <section
             id="appearance"
-            className="rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800"
+            className="rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800 scroll-mt-20"
           >
             <h2 className="mb-4 text-lg font-medium text-neutral-900 dark:text-white flex items-center">
               <Moon className="mr-2 h-5 w-5" />
               Appearance
             </h2>
-
             <div className="space-y-4">
               <div className="flex flex-col space-y-2">
                 <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -207,7 +254,6 @@ const Settings: React.FC = () => {
                     <Sun className="h-6 w-6 text-amber-500" />
                     <span className="font-medium">Light</span>
                   </button>
-
                   <button
                     type="button"
                     onClick={() => (theme === "dark" ? null : toggleTheme())}
@@ -228,13 +274,12 @@ const Settings: React.FC = () => {
           {/* Notifications section */}
           <section
             id="notifications"
-            className="mt-6 rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800"
+            className="mt-6 rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800 scroll-mt-20"
           >
             <h2 className="mb-4 text-lg font-medium text-neutral-900 dark:text-white flex items-center">
               <Bell className="mr-2 h-5 w-5" />
               Notifications
             </h2>
-
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -325,13 +370,12 @@ const Settings: React.FC = () => {
           {/* Privacy & Security section */}
           <section
             id="privacy"
-            className="mt-6 rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800"
+            className="mt-6 rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800 scroll-mt-20"
           >
             <h2 className="mb-4 text-lg font-medium text-neutral-900 dark:text-white flex items-center">
               <Shield className="mr-2 h-5 w-5" />
               Privacy & Security
             </h2>
-
             <div className="space-y-6">
               <div>
                 <label className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -437,18 +481,17 @@ const Settings: React.FC = () => {
           {/* App Settings section */}
           <section
             id="app"
-            className="mt-6 rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800"
+            className="mt-6 rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800 scroll-mt-20"
           >
             <h2 className="mb-4 text-lg font-medium text-neutral-900 dark:text-white flex items-center">
               <Globe className="mr-2 h-5 w-5" />
               App Settings
             </h2>
-
             <div className="space-y-6">
               <div>
                 <label className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300 flex items-center">
                   <Languages className="mr-2 h-4 w-4" />
-                  Language
+                  Languages
                 </label>
                 <select
                   name="language"
@@ -513,13 +556,12 @@ const Settings: React.FC = () => {
           {/* Danger Zone section */}
           <section
             id="danger"
-            className="mt-6 rounded-lg border border-error-300 bg-error-50 p-6 dark:border-error-800 dark:bg-error-900/20"
+            className="mt-6 rounded-lg border border-error-300 bg-error-50 p-6 dark:border-error-800 dark:bg-error-900/20 scroll-mt-20"
           >
             <h2 className="mb-4 text-lg font-medium text-error-700 dark:text-error-400 flex items-center">
               <AlertTriangle className="mr-2 h-5 w-5" />
               Danger Zone
             </h2>
-
             <div className="space-y-6">
               <div>
                 <h3 className="mb-1 text-sm font-medium text-error-700 dark:text-error-400">

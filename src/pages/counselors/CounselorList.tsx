@@ -381,7 +381,7 @@ const CounselorList: React.FC = () => {
                 <button
                   id="status-filter-btn"
                   type="button"
-                  className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                  className="hidden inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                   onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
                 >
                   <Filter className="mr-2 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
@@ -439,7 +439,7 @@ const CounselorList: React.FC = () => {
                 <button
                   id="specialization-filter-btn"
                   type="button"
-                  className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                  className="hidden inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                   onClick={() =>
                     setSpecializationDropdownOpen(!specializationDropdownOpen)
                   }
@@ -629,6 +629,9 @@ const CounselorList: React.FC = () => {
                   sortedCounselors.map((counselor) => (
                     <tr
                       key={counselor.id}
+                      onClick={() =>
+                        (window.location.href = `/counselors/${counselor.id}`)
+                      }
                       className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
                     >
                       <td className="whitespace-nowrap px-6 py-4">

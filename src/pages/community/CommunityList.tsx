@@ -406,7 +406,7 @@ const CommunityList: React.FC = () => {
                 <button
                   id="status-filter-btn"
                   type="button"
-                  className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                  className="hidden inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                   onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
                 >
                   <Filter className="mr-2 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
@@ -464,7 +464,7 @@ const CommunityList: React.FC = () => {
                 <button
                   id="category-filter-btn"
                   type="button"
-                  className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                  className="hidden inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                   onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
                 >
                   <Filter className="mr-2 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
@@ -506,7 +506,7 @@ const CommunityList: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setFilterFeatured(!filterFeatured)}
-                className={`inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium ${
+                className={`hidden inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium ${
                   filterFeatured
                     ? "border-primary-300 bg-primary-50 text-primary-700 dark:border-primary-700 dark:bg-primary-900/20 dark:text-primary-400"
                     : "border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
@@ -669,7 +669,10 @@ const CommunityList: React.FC = () => {
                   sortedPosts.map((post) => (
                     <tr
                       key={post.id}
-                      className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
+                      onClick={() =>
+                        (window.location.href = `/community/${post.id}`)
+                      }
+                      className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 cursor-pointer"
                     >
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">

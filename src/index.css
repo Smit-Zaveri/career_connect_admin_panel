@@ -135,3 +135,48 @@ input.react-datepicker__input-container,
 .dark .react-datepicker__input-container input {
     background-color: #1f2937 !important;
 }
+
+/* Custom Scrollbar Styles for chat and other scrollable areas */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #a5b4fc #f3f4f6;
+    /* thumb and track for light mode */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #a5b4fc;
+    /* indigo-200 */
+    border-radius: 8px;
+    border: 2px solid #f3f4f6;
+    /* track color */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    /* neutral-100 */
+    border-radius: 8px;
+}
+
+.dark .custom-scrollbar {
+    scrollbar-color: #6366f1 #1f2937;
+    /* thumb and track for dark mode */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #6366f1;
+    /* indigo-500 */
+    border-radius: 8px;
+    border: 2px solid #1f2937;
+    /* dark track */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+    background: #1f2937;
+    /* dark background */
+    border-radius: 8px;
+}

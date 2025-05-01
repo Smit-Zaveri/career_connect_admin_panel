@@ -315,7 +315,7 @@ const CommunityDetail: React.FC = () => {
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 mt-2 w-40 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-neutral-800">
+              <div className="absolute z-50 right-0 mt-2 w-40 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-neutral-800">
                 <div className="py-1">
                   <Link
                     to={`/community/edit/${id}`}
@@ -473,7 +473,10 @@ const CommunityDetail: React.FC = () => {
 
             {showChat && (
               <>
-                <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 custom-scrollbar">
+                <div
+                  className="flex-1 px-6 py-4 space-y-4 custom-scrollbar"
+                  style={{ maxHeight: 400, minHeight: 200, overflowY: "auto" }}
+                >
                   {messagesLoading ? (
                     <div className="flex h-full flex-col items-center justify-center">
                       <Loader className="h-8 w-8 animate-spin text-primary-600" />
