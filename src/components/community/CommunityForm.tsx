@@ -4,9 +4,8 @@ import { User } from "../../context/AuthContext";
 import {
   X,
   Loader,
-  Upload,
-  Tag as TagIcon,
   Link as LinkIcon,
+  Tag as TagIcon,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -17,8 +16,7 @@ export interface CommunityFormData {
   tags: string[];
   status: "published" | "draft";
   featured: boolean;
-  image?: File | null;
-  imageUrl?: string;
+  imageUrl: string;
   pinned?: boolean;
 }
 
@@ -54,15 +52,11 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
     featured: initialData.featured || false,
     imageUrl: initialData.imageUrl || "",
     pinned: initialData.pinned || false,
-    image: null,
   });
 
   const [tagInput, setTagInput] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(
     initialData.imageUrl || null
-  );
-  const [imageInputType, setImageInputType] = useState<"upload" | "link">(
-    initialData.imageUrl ? "link" : "upload"
   );
 
   const handleChange = (
@@ -108,59 +102,9 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
     });
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-
-      // Check file size (limit to 5MB)
-      if (selectedFile.size > 5 * 1024 * 1024) {
-        toast.error("Image size must be less than 5MB");
-        return;
-      }
-
-      // Check file type
-      if (!selectedFile.type.startsWith("image/")) {
-        toast.error("Please select a valid image file");
-        return;
-      }
-
-      // Sanitize file name to prevent issues
-      const fileNameSanitized = selectedFile.name.replace(
-        /[^a-zA-Z0-9._-]/g,
-        ""
-      );
-      if (fileNameSanitized !== selectedFile.name) {
-        console.log(
-          `Sanitized filename from ${selectedFile.name} to ${fileNameSanitized}`
-        );
-      }
-
-      setFormData({
-        ...formData,
-        image: selectedFile,
-      });
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
-
-      console.log(
-        "Image selected for upload:",
-        selectedFile.name,
-        "Size:",
-        (selectedFile.size / 1024).toFixed(2),
-        "KB"
-      );
-    }
-  };
-
   const removeImage = () => {
     setFormData({
       ...formData,
-      image: null,
       imageUrl: "",
     });
     setImagePreview(null);
@@ -186,12 +130,7 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
     }
 
     try {
-      // The image handling is now done in the communityService
-      // We just pass along the form data and let the service handle the upload
       await onSubmit(formData);
-
-      // Form submission is handled by the parent component (CommunityCreate or CommunityEdit)
-      // which will handle navigation after successful submission
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to submit form. Please try again.");
@@ -350,143 +289,54 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
         <div className="space-y-6 md:col-span-1">
           <div>
             <label
-              htmlFor="image"
+              htmlFor="imageUrl"
               className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
             >
-              Post Image
+              Image URL
             </label>
-
-            <div className="mb-2 flex rounded-md shadow-sm">
-              <button
-                type="button"
-                onClick={() => {
-                  setImageInputType("upload");
-                  // Clear image URL if we switch to upload
-                  if (imageInputType === "link") {
-                    setFormData({ ...formData, imageUrl: "" });
-                    setImagePreview(null);
-                  }
-                }}
-                className={`relative inline-flex items-center rounded-l-md px-4 py-2 text-sm font-medium ${
-                  imageInputType === "upload"
-                    ? "bg-primary-600 text-white"
-                    : "bg-white text-neutral-700 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                }`}
-              >
-                <Upload className="mr-2 h-4 w-4" />
-                Upload
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setImageInputType("link");
-                  // Clear file upload if we switch to link
-                  if (imageInputType === "upload") {
-                    setFormData({ ...formData, image: null });
-                    if (!formData.imageUrl) {
-                      setImagePreview(null);
-                    }
-                  }
-                }}
-                className={`relative inline-flex items-center rounded-r-md px-4 py-2 text-sm font-medium ${
-                  imageInputType === "link"
-                    ? "bg-primary-600 text-white"
-                    : "bg-white text-neutral-700 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                }`}
-              >
-                <LinkIcon className="mr-2 h-4 w-4" />
-                URL
-              </button>
-            </div>
-
-            {imageInputType === "link" ? (
-              <div className="space-y-2">
-                <div className="relative">
-                  <input
-                    type="url"
-                    id="imageUrl"
-                    name="imageUrl"
-                    value={formData.imageUrl || ""}
-                    onChange={(e) => {
-                      const url = e.target.value;
-                      setFormData({ ...formData, imageUrl: url });
-                      // Update the preview with the URL
-                      setImagePreview(url || null);
-                    }}
-                    placeholder="Enter image URL (https://...)"
-                    className="block w-full rounded-md border border-neutral-300 pl-3 pr-12 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white"
-                  />
-                </div>
-                {imagePreview && (
-                  <div className="mt-2 space-y-2 rounded-md border border-neutral-300 p-2 dark:border-neutral-700">
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                      Preview:
-                    </p>
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="mx-auto h-40 w-auto rounded-md object-cover"
-                      onError={() => {
-                        toast.error(
-                          "Invalid image URL or image not accessible"
-                        );
-                        setImagePreview(null);
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="inline-flex items-center rounded-md border border-transparent bg-error-100 px-3 py-1 text-xs font-medium text-error-700 hover:bg-error-200 dark:bg-error-900/20 dark:text-error-400 dark:hover:bg-error-900/30"
-                    >
-                      <X className="mr-1 h-3 w-3" />
-                      Remove
-                    </button>
-                  </div>
-                )}
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <LinkIcon className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
               </div>
-            ) : (
-              <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-neutral-300 px-6 py-4 dark:border-neutral-700">
-                <div className="space-y-4 text-center">
-                  {imagePreview ? (
-                    <div className="space-y-2">
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="mx-auto h-40 w-auto rounded-md object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={removeImage}
-                        className="inline-flex items-center rounded-md border border-transparent bg-error-100 px-3 py-1 text-xs font-medium text-error-700 hover:bg-error-200 dark:bg-error-900/20 dark:text-error-400 dark:hover:bg-error-900/30"
-                      >
-                        <X className="mr-1 h-3 w-3" />
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <Upload className="mx-auto h-12 w-12 text-neutral-400" />
-                      <div className="flex flex-col space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
-                        <label
-                          htmlFor="file-upload"
-                          className="relative cursor-pointer rounded-md bg-white font-medium text-primary-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 hover:text-primary-500 dark:bg-neutral-900 dark:text-primary-400 dark:hover:text-primary-300"
-                        >
-                          <span>Upload an image</span>
-                          <input
-                            id="file-upload"
-                            name="file-upload"
-                            type="file"
-                            className="sr-only"
-                            onChange={handleImageChange}
-                            accept="image/*"
-                          />
-                        </label>
-                        <p>or drag and drop (PNG, JPG)</p>
-                        <p className="text-xs">Max file size: 5MB</p>
-                      </div>
-                    </>
-                  )}
-                </div>
+              <input
+                type="url"
+                id="imageUrl"
+                name="imageUrl"
+                value={formData.imageUrl || ""}
+                onChange={(e) => {
+                  const url = e.target.value;
+                  setFormData({ ...formData, imageUrl: url });
+                  // Update the preview with the URL
+                  setImagePreview(url || null);
+                }}
+                placeholder="Enter image URL (https://...)"
+                className="block w-full rounded-md border border-neutral-300 pl-10 pr-12 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white"
+              />
+            </div>
+            {imagePreview && (
+              <div className="mt-2 space-y-2 rounded-md border border-neutral-300 p-2 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  Preview:
+                </p>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="mx-auto h-40 w-auto rounded-md object-cover"
+                  onError={() => {
+                    toast.error(
+                      "Invalid image URL or image not accessible"
+                    );
+                    setImagePreview(null);
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="inline-flex items-center rounded-md border border-transparent bg-error-100 px-3 py-1 text-xs font-medium text-error-700 hover:bg-error-200 dark:bg-error-900/20 dark:text-error-400 dark:hover:bg-error-900/30"
+                >
+                  <X className="mr-1 h-3 w-3" />
+                  Remove
+                </button>
               </div>
             )}
           </div>

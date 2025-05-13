@@ -25,9 +25,6 @@ const CommunityCreate: React.FC = () => {
       // Log the form data for debugging
       console.log("Submitting community post data:", {
         ...data,
-        image: data.image
-          ? `${data.image.name} (${(data.image.size / 1024).toFixed(2)} KB)`
-          : "No image",
         imageUrl: data.imageUrl || "No image URL",
       });
 
