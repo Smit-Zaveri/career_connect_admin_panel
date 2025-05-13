@@ -185,32 +185,35 @@ const setupMockImageService = () => {
     HTMLImageElement.prototype,
     "src"
   );
-  Object.defineProperty(HTMLImageElement.prototype, "src", {
-    get: function () {
-      return originalImageSrc.get.call(this);
-    },
-    set: function (url) {
-      if (url.includes("/uploads/")) {
-        // Get the path part
-        const path = url.includes("http") ? new URL(url).pathname : url;
+  
+  if (originalImageSrc?.get && originalImageSrc?.set) {
+    Object.defineProperty(HTMLImageElement.prototype, "src", {
+      get: function () {
+        return originalImageSrc.get!.call(this);
+      },
+      set: function (url) {
+        if (url.includes("/uploads/")) {
+          // Get the path part
+          const path = url.includes("http") ? new URL(url).pathname : url;
 
-        // Get our mock uploads
-        const mockUploads = JSON.parse(
-          localStorage.getItem(MOCK_UPLOADS_STORAGE_KEY) || "{}"
-        );
+          // Get our mock uploads
+          const mockUploads = JSON.parse(
+            localStorage.getItem(MOCK_UPLOADS_STORAGE_KEY) || "{}"
+          );
 
-        // Check if we have this image mocked
-        if (mockUploads[path]) {
-          console.log("🖼️ Serving mocked image src:", path);
-          originalImageSrc.set.call(this, mockUploads[path]);
-          return;
+          // Check if we have this image mocked
+          if (mockUploads[path]) {
+            console.log("🖼️ Serving mocked image src:", path);
+            originalImageSrc.set!.call(this, mockUploads[path]);
+            return;
+          }
         }
-      }
 
-      originalImageSrc.set.call(this, url);
-    },
-    configurable: true,
-  });
+        originalImageSrc.set!.call(this, url);
+      },
+      configurable: true,
+    });
+  }
 
   console.log("🚀 Mock image service initialized for development");
 };

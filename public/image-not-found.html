@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Not Found</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            width: 500px;
+        }
+        h1 {
+            margin-bottom: 1rem;
+        }
+        p {
+            margin-bottom: 1.5rem;
+            color: #4b5563;
+        }
+        .image-path {
+            background-color: #f3f4f6;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            word-break: break-all;
+            font-family: monospace;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Not Found</h1>
+        <p>The image you're looking for could not be found. If you're in development mode, make sure you've saved the image to the correct location.</p>
+        <div class="image-path" id="image-path"></div>
+        <p>Make sure the image exists at the above path within the <code>public</code> folder.</p>
+    </div>
+
+    <script>
+        document.getElementById('image-path').textContent = window.location.pathname;
+    </script>
+</body>
+</html>

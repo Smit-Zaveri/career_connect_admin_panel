@@ -1,8 +1,28 @@
 {
     "rewrites": [
         {
-            "source": "/uploads/(.*)",
-            "destination": "/uploads/$1"
+            "source": "/uploads/:path*",
+            "destination": "/uploads/:path*"
+        },
+        {
+            "source": "/(.*)\\.webp$",
+            "destination": "/uploads/$1.webp"
+        },
+        {
+            "source": "/(.*)\\.jpg$",
+            "destination": "/uploads/$1.jpg"
+        },
+        {
+            "source": "/(.*)\\.jpeg$",
+            "destination": "/uploads/$1.jpeg"
+        },
+        {
+            "source": "/(.*)\\.png$",
+            "destination": "/uploads/$1.png"
+        },
+        {
+            "source": "/(.*)\\.gif$",
+            "destination": "/uploads/$1.gif"
         },
         {
             "source": "/(.*)",
