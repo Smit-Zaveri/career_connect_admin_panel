@@ -23,6 +23,17 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+// Initialize storage with custom settings to help with CORS
 const storage = getStorage(app);
+
+// Add CORS configuration helper
+export const getStorageDownloadURL = (path: string | number | boolean) => {
+  // Add cache-busting parameter to avoid CORS issues during development
+  const timestamp = new Date().getTime();
+  return `https://firebasestorage.googleapis.com/v0/b/${
+    firebaseConfig.storageBucket
+  }/o/${encodeURIComponent(path)}?alt=media&t=${timestamp}`;
+};
 
 export { app, analytics, db, auth, storage };

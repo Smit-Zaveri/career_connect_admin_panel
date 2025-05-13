@@ -629,9 +629,6 @@ const CounselorList: React.FC = () => {
                   sortedCounselors.map((counselor) => (
                     <tr
                       key={counselor.id}
-                      onClick={() =>
-                        (window.location.href = `/counselors/${counselor.id}`)
-                      }
                       className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
                     >
                       <td className="whitespace-nowrap px-6 py-4">
@@ -640,12 +637,20 @@ const CounselorList: React.FC = () => {
                             type="checkbox"
                             className="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900"
                             checked={selectedCounselors.includes(counselor.id)}
-                            onChange={() => handleSelectCounselor(counselor.id)}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleSelectCounselor(counselor.id);
+                            }}
                           />
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center">
+                        <div
+                          className="flex items-center cursor-pointer"
+                          onClick={() =>
+                            (window.location.href = `/counselors/${counselor.id}`)
+                          }
+                        >
                           <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full">
                             <img
                               src={counselor.photoURL}
@@ -720,13 +725,14 @@ const CounselorList: React.FC = () => {
                             <button
                               type="button"
                               className="flex items-center rounded-full p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setActiveActionDropdown(
                                   activeActionDropdown === counselor.id
                                     ? null
                                     : counselor.id
-                                )
-                              }
+                                );
+                              }}
                             >
                               <MoreHorizontal className="h-5 w-5" />
                             </button>
@@ -736,6 +742,7 @@ const CounselorList: React.FC = () => {
                                   <Link
                                     to={`/counselors/${counselor.id}`}
                                     className="flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                    onClick={(e) => e.stopPropagation()}
                                   >
                                     <Eye className="mr-3 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                                     View
@@ -745,14 +752,16 @@ const CounselorList: React.FC = () => {
                                       <Link
                                         to={`/counselors/edit/${counselor.id}`}
                                         className="flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                        onClick={(e) => e.stopPropagation()}
                                       >
                                         <Edit className="mr-3 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                                         Edit
                                       </Link>
                                       <button
-                                        onClick={() =>
-                                          handleDeleteCounselor(counselor.id)
-                                        }
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDeleteCounselor(counselor.id);
+                                        }}
                                         className="flex w-full items-center px-4 py-2 text-sm text-error-600 hover:bg-neutral-100 dark:text-error-400 dark:hover:bg-neutral-700"
                                       >
                                         <Trash className="mr-3 h-4 w-4" />

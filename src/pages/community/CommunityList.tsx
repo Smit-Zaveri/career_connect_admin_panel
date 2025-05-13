@@ -50,12 +50,10 @@ const CommunityList: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-  // New state to track which action dropdown is open
   const [activeActionDropdown, setActiveActionDropdown] = useState<
     string | null
   >(null);
 
-  // Pagination
   const [lastVisible, setLastVisible] = useState<any>(null);
   const [hasMore, setHasMore] = useState(true);
   const [pageSize] = useState(10);
@@ -68,7 +66,6 @@ const CommunityList: React.FC = () => {
     try {
       setLoading(true);
 
-      // Create filter object based on current filter states
       const filters: any = {};
 
       if (filterStatus !== "all") {
@@ -96,7 +93,6 @@ const CommunityList: React.FC = () => {
         setLastVisible(result.lastVisible);
         setHasMore(result.communities.length === pageSize);
 
-        // Extract unique categories for the filter dropdown
         if (!loadMore) {
           const uniqueCategories = Array.from(
             new Set(result.communities.map((post) => post.category))
@@ -114,7 +110,6 @@ const CommunityList: React.FC = () => {
     }
   };
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const statusBtn = document.getElementById("status-filter-btn");
@@ -142,7 +137,6 @@ const CommunityList: React.FC = () => {
         setCategoryDropdownOpen(false);
       }
 
-      // Close action dropdown when clicking outside
       if (
         activeActionDropdown &&
         !(e.target as Element).closest(".action-dropdown-container")
@@ -195,10 +189,8 @@ const CommunityList: React.FC = () => {
         await deleteCommunity(id, user.id);
         toast.success("Post deleted successfully");
 
-        // Refresh the list
         fetchPosts();
 
-        // Clear from selected if it's selected
         setSelectedPosts(selectedPosts.filter((postId) => postId !== id));
       } catch (error) {
         console.error("Error deleting post:", error);
@@ -223,7 +215,6 @@ const CommunityList: React.FC = () => {
 
         toast.success(`${selectedPosts.length} posts deleted successfully`);
 
-        // Refresh the list and clear selected
         fetchPosts();
         setSelectedPosts([]);
       } catch (error) {
@@ -233,12 +224,9 @@ const CommunityList: React.FC = () => {
     }
   };
 
-  // Filter posts
   const filteredPosts = posts.filter((post) => {
-    // Make search case-insensitive and trim whitespace
     const search = searchTerm.toLowerCase().trim();
 
-    // If no search term, just check other filters
     if (!search) {
       const matchesStatus =
         filterStatus === "all" || post.status === filterStatus;
@@ -248,26 +236,20 @@ const CommunityList: React.FC = () => {
       return matchesStatus && matchesCategory && matchesFeatured;
     }
 
-    // Search in title
     const titleMatch = post.title?.toLowerCase().includes(search);
 
-    // Search in author name (with null checks)
     const authorMatch =
       post.author?.name?.toLowerCase().includes(search) || false;
 
-    // Search in category (with null check)
     const categoryMatch =
       post.category?.toLowerCase().includes(search) || false;
 
-    // Search in description (with null check)
     const descriptionMatch =
       post.description?.toLowerCase().includes(search) || false;
 
-    // Search in tags
     const tagsMatch =
       post.tags?.some((tag) => tag.toLowerCase().includes(search)) || false;
 
-    // Combine search results
     const matchesSearch =
       titleMatch ||
       authorMatch ||
@@ -275,7 +257,6 @@ const CommunityList: React.FC = () => {
       descriptionMatch ||
       tagsMatch;
 
-    // Apply other filters
     const matchesStatus =
       filterStatus === "all" || post.status === filterStatus;
     const matchesCategory =
@@ -285,7 +266,6 @@ const CommunityList: React.FC = () => {
     return matchesSearch && matchesStatus && matchesCategory && matchesFeatured;
   });
 
-  // Sort posts
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     if (sortKey === "likes") {
       return sortDirection === "asc" ? a.likes - b.likes : b.likes - a.likes;
@@ -317,7 +297,6 @@ const CommunityList: React.FC = () => {
     return 0;
   });
 
-  // Get status badge element
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "published":
@@ -374,7 +353,7 @@ const CommunityList: React.FC = () => {
               className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600"
             >
               <Plus className="mr-2 h-4 w-4" />
-              <span>New Post</span>
+              <span>Create Community</span>
             </Link>
           </motion.div>
         )}
@@ -666,170 +645,188 @@ const CommunityList: React.FC = () => {
                     </td>
                   </tr>
                 ) : sortedPosts.length > 0 ? (
-                  sortedPosts.map((post) => (
-                    <tr
-                      key={post.id}
-                      onClick={() =>
-                        (window.location.href = `/community/${post.id}`)
-                      }
-                      className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 cursor-pointer"
-                    >
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900"
-                            checked={selectedPosts.includes(post.id)}
-                            onChange={() => handleSelectPost(post.id)}
-                          />
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-neutral-900 dark:text-white">
-                              {post.title}
-                              {post.pinned && (
-                                <span className="ml-2 inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300">
-                                  Pinned
-                                </span>
-                              )}
-                            </div>
-                            <div className="mt-1 flex flex-wrap gap-1">
-                              {post.tags?.slice(0, 3).map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                              {post.tags && post.tags.length > 3 && (
-                                <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                  +{post.tags.length - 3}
-                                </span>
-                              )}
-                            </div>
+                  sortedPosts.map((post) => {
+                    return (
+                      <tr
+                        key={post.id}
+                        className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
+                      >
+                        <td className="whitespace-nowrap px-6 py-4 no-navigate">
+                          <div className="flex items-center">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900"
+                              checked={selectedPosts.includes(post.id)}
+                              onChange={() => handleSelectPost(post.id)}
+                            />
                           </div>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full">
-                            {post.author && post.author.avatar ? (
-                              <img
-                                src={post.author.avatar}
-                                alt={post.author.name}
-                                className="h-full w-full object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center bg-neutral-200 dark:bg-neutral-700">
-                                <User className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                        </td>
+                        <td 
+                          className="px-6 py-4 cursor-pointer" 
+                          onClick={() => window.location.href = `/community/${post.id}`}
+                        >
+                          <div className="flex items-center">
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-neutral-900 dark:text-white">
+                                {post.title}
+                                {post.pinned && (
+                                  <span className="ml-2 inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300">
+                                    Pinned
+                                  </span>
+                                )}
                               </div>
-                            )}
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-neutral-900 dark:text-white">
-                              {post.author ? post.author.name : "Unknown User"}
-                            </div>
-                            <div className="text-xs text-neutral-500 capitalize dark:text-neutral-400">
-                              {post.author ? post.author.role : "Unknown"}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {post.category && (
-                          <span className="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-medium text-primary-700 dark:bg-primary-900/20 dark:text-primary-300">
-                            <Tag className="mr-1 h-3 w-3" />
-                            {post.category}
-                          </span>
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {getStatusBadge(post.status)}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex items-center space-x-4 text-sm text-neutral-500 dark:text-neutral-400">
-                          <div className="flex items-center">
-                            <Eye className="mr-1 h-4 w-4" />
-                            <span>{post.views}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <ThumbsUp className="mr-1 h-4 w-4" />
-                            <span>{post.likes}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <MessageCircle className="mr-1 h-4 w-4" />
-                            <span>{post.comments}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex items-center text-sm text-neutral-500 dark:text-neutral-400">
-                          <Calendar className="mr-2 h-4 w-4" />
-                          {post.createdAt
-                            ? formatDate(post.createdAt.toDate())
-                            : "—"}
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                        <div className="flex justify-end">
-                          <div className="relative action-dropdown-container">
-                            <button
-                              type="button"
-                              className="flex items-center rounded-full p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
-                              onClick={() =>
-                                setActiveActionDropdown(
-                                  activeActionDropdown === post.id
-                                    ? null
-                                    : post.id
-                                )
-                              }
-                            >
-                              <MoreHorizontal className="h-5 w-5" />
-                            </button>
-                            {activeActionDropdown === post.id && (
-                              <div className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-neutral-800 z-10">
-                                <div className="py-1">
-                                  <Link
-                                    to={`/community/${post.id}`}
-                                    className="flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {post.tags?.slice(0, 3).map((tag) => (
+                                  <span
+                                    key={tag}
+                                    className="inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300"
                                   >
-                                    <Eye className="mr-3 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
-                                    View
-                                  </Link>
-                                  {(isAdmin ||
-                                    (isCounselor &&
-                                      post.author?.id === user?.id)) && (
-                                    <>
-                                      <Link
-                                        to={`/community/edit/${post.id}`}
-                                        className="flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                                      >
-                                        <Edit className="mr-3 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
-                                        Edit
-                                      </Link>
-                                      <button
-                                        onClick={() => {
-                                          handleDeletePost(post.id);
-                                          setActiveActionDropdown(null); // Close dropdown after delete
-                                        }}
-                                        className="flex w-full items-center px-4 py-2 text-sm text-error-600 hover:bg-neutral-100 dark:text-error-400 dark:hover:bg-neutral-700"
-                                      >
-                                        <Trash className="mr-3 h-4 w-4" />
-                                        Delete
-                                      </button>
-                                    </>
-                                  )}
-                                </div>
+                                    {tag}
+                                  </span>
+                                ))}
+                                {post.tags && post.tags.length > 3 && (
+                                  <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                    +{post.tags.length - 3}
+                                  </span>
+                                )}
                               </div>
-                            )}
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                        </td>
+                        <td 
+                          className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                          onClick={() => window.location.href = `/community/${post.id}`}
+                        >
+                          <div className="flex items-center">
+                            <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full">
+                              {post.author && post.author.avatar ? (
+                                <img
+                                  src={post.author.avatar}
+                                  alt={post.author.name}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                <div className="flex h-full w-full items-center justify-center bg-neutral-200 dark:bg-neutral-700">
+                                  <User className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="ml-3">
+                              <div className="text-sm font-medium text-neutral-900 dark:text-white">
+                                {post.author ? post.author.name : "Unknown User"}
+                              </div>
+                              <div className="text-xs text-neutral-500 capitalize dark:text-neutral-400">
+                                {post.author ? post.author.role : "Unknown"}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td 
+                          className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                          onClick={() => window.location.href = `/community/${post.id}`}
+                        >
+                          {post.category && (
+                            <span className="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-medium text-primary-700 dark:bg-primary-900/20 dark:text-primary-300">
+                              <Tag className="mr-1 h-3 w-3" />
+                              {post.category}
+                            </span>
+                          )}
+                        </td>
+                        <td 
+                          className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                          onClick={() => window.location.href = `/community/${post.id}`}
+                        >
+                          {getStatusBadge(post.status)}
+                        </td>
+                        <td 
+                          className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                          onClick={() => window.location.href = `/community/${post.id}`}
+                        >
+                          <div className="flex items-center space-x-4 text-sm text-neutral-500 dark:text-neutral-400">
+                            <div className="flex items-center">
+                              <Eye className="mr-1 h-4 w-4" />
+                              <span>{post.views}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <ThumbsUp className="mr-1 h-4 w-4" />
+                              <span>{post.likes}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <MessageCircle className="mr-1 h-4 w-4" />
+                              <span>{post.comments}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td 
+                          className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                          onClick={() => window.location.href = `/community/${post.id}`}
+                        >
+                          <div className="flex items-center text-sm text-neutral-500 dark:text-neutral-400">
+                            <Calendar className="mr-2 h-4 w-4" />
+                            {post.createdAt
+                              ? formatDate(post.createdAt.toDate())
+                              : "—"}
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium no-navigate">
+                          <div className="flex justify-end">
+                            <div className="relative action-dropdown-container">
+                              <button
+                                type="button"
+                                className="flex items-center rounded-full p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
+                                onClick={() => {
+                                  setActiveActionDropdown(
+                                    activeActionDropdown === post.id
+                                      ? null
+                                      : post.id
+                                  );
+                                }}
+                              >
+                                <MoreHorizontal className="h-5 w-5" />
+                              </button>
+                              {activeActionDropdown === post.id && (
+                                <div className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-neutral-800 z-10">
+                                  <div className="py-1">
+                                    <Link
+                                      to={`/community/${post.id}`}
+                                      className="flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                    >
+                                      <Eye className="mr-3 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                                      View
+                                    </Link>
+                                    {(isAdmin ||
+                                      (isCounselor &&
+                                        post.author?.id === user?.id)) && (
+                                      <>
+                                        <Link
+                                          to={`/community/edit/${post.id}`}
+                                          className="flex items-center px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                        >
+                                          <Edit className="mr-3 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                                          Edit
+                                        </Link>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeletePost(post.id);
+                                            setActiveActionDropdown(null); // Close dropdown after delete
+                                          }}
+                                          className="flex w-full items-center px-4 py-2 text-sm text-error-600 hover:bg-neutral-100 dark:text-error-400 dark:hover:bg-neutral-700"
+                                        >
+                                          <Trash className="mr-3 h-4 w-4" />
+                                          Delete
+                                        </button>
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
                     <td colSpan={8} className="px-6 py-10 text-center">
@@ -851,7 +848,7 @@ const CommunityList: React.FC = () => {
                             className="mt-4 inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600"
                           >
                             <Plus className="mr-2 h-4 w-4" />
-                            New Post
+                            Create Community
                           </Link>
                         )}
                       </div>
@@ -880,7 +877,7 @@ const CommunityList: React.FC = () => {
               <button
                 type="button"
                 className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                disabled={loading} // Disable when loading
+                disabled={loading}
                 onClick={() => fetchPosts()}
               >
                 Previous
@@ -888,8 +885,8 @@ const CommunityList: React.FC = () => {
               <button
                 type="button"
                 className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                disabled={!hasMore || loading} // Disable when no more posts or loading
-                onClick={() => fetchPosts(true)} // true for load more
+                disabled={!hasMore || loading}
+                onClick={() => fetchPosts(true)}
               >
                 Next
               </button>

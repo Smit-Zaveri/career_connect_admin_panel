@@ -589,12 +589,12 @@ const JobList: React.FC<JobListProps> = () => {
                   sortedJobs.map((job) => (
                     <tr
                       key={job.job_id}
-                      onClick={() =>
-                        (window.location.href = `/jobs/${job.job_id}`)
-                      }
                       className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
                     >
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td
+                        className="whitespace-nowrap px-6 py-4"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <div className="flex items-center">
                           <input
                             type="checkbox"
@@ -604,7 +604,12 @@ const JobList: React.FC<JobListProps> = () => {
                           />
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td
+                        className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `/jobs/${job.job_id}`)
+                        }
+                      >
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0">
                             {job.employer_logo ? (
@@ -632,7 +637,12 @@ const JobList: React.FC<JobListProps> = () => {
                         </div>
                       </td>
 
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td
+                        className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `/jobs/${job.job_id}`)
+                        }
+                      >
                         <div className="flex items-center text-sm text-neutral-500 dark:text-neutral-400">
                           {job.job_is_remote ? (
                             <div className="flex items-center">
@@ -644,34 +654,53 @@ const JobList: React.FC<JobListProps> = () => {
                           )}
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td
+                        className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `/jobs/${job.job_id}`)
+                        }
+                      >
                         <div className="text-sm text-neutral-500 dark:text-neutral-400">
                           {job.job_employment_type}
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td
+                        className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `/jobs/${job.job_id}`)
+                        }
+                      >
                         {getStatusBadge(job)}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td
+                        className="whitespace-nowrap px-6 py-4 cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `/jobs/${job.job_id}`)
+                        }
+                      >
                         <div className="text-sm text-neutral-500 dark:text-neutral-400">
                           {job.applications || 0}
                         </div>
                       </td>
 
-                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                      <td
+                        className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <div className="flex justify-end">
                           <div className="relative inline-block text-left">
                             <button
                               type="button"
                               className="flex items-center rounded-full p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
                               data-job-action-btn
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setOpenActionMenu(
                                   openActionMenu === job.job_id
                                     ? null
                                     : job.job_id
-                                )
-                              }
+                                );
+                              }}
                             >
                               <MoreHorizontal className="h-5 w-5" />
                             </button>
@@ -679,6 +708,7 @@ const JobList: React.FC<JobListProps> = () => {
                               <div
                                 className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-neutral-800"
                                 data-job-action-menu
+                                onClick={(e) => e.stopPropagation()}
                               >
                                 <div className="py-1">
                                   <Link
@@ -698,9 +728,10 @@ const JobList: React.FC<JobListProps> = () => {
                                         Edit
                                       </Link>
                                       <button
-                                        onClick={() =>
-                                          handleDeleteJob(job.job_id)
-                                        }
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDeleteJob(job.job_id);
+                                        }}
                                         className="flex w-full items-center px-4 py-2 text-sm text-error-600 hover:bg-neutral-100 dark:text-error-400 dark:hover:bg-neutral-700"
                                       >
                                         <Trash className="mr-3 h-4 w-4" />

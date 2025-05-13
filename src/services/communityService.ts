@@ -13,7 +13,6 @@ import {
   startAfter,
   increment,
   Timestamp,
-  GeoPoint,
   serverTimestamp,
   arrayUnion,
   arrayRemove,
@@ -26,14 +25,87 @@ import {
 } from "firebase/storage";
 import { db, storage } from "../config/firebase";
 import { User } from "../context/AuthContext";
+import toast from "react-hot-toast";
+import { processLocalFile } from "../utils/fileUtils";
 
 const COMMUNITY_COLLECTION = "communities";
+// Base URL for images in production
+const BASE_URL = "https://career-connect-admin-panel.vercel.app";
+// For development, use relative path
+const isDevelopment = window.location.hostname === "localhost";
+
+// Function to handle file uploads that saves to public/uploads folder
+const processImageUpload = async (file: File, communityId: string): Promise<{ imageUrl: string; width: number; height: number }> => {
+  try {
+    // Sanitize filename to prevent issues
+    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
+    
+    // Create the path where the file will be saved
+    const relativePath = `/uploads/${communityId}${sanitizedFileName}`;
+    
+    // For browser environments, we can't directly write to the filesystem
+    // Instead, we'll create a blob URL for development and use the predefined URL pattern for production
+    
+    // Get dimensions of the image
+    const dimensions = await getImageDimensions(file);
+    
+    // In a real implementation, you would need a server endpoint to handle the file upload
+    // For now, we'll simulate a successful upload
+    
+    if (isDevelopment) {
+      console.log(`Image would be saved at: public${relativePath}`);
+      console.log("In development, the file should be manually placed in public/uploads folder");
+      
+      // For development, create a blob URL so we can see the image
+      // This is temporary and will be lost on page refresh
+      // In production, you'll need to copy files to the public/uploads folder
+      const objectUrl = URL.createObjectURL(file);
+      console.log("Development preview URL:", objectUrl);
+    } else {
+      console.log(`In production, image would be stored at: public${relativePath}`);
+    }
+    
+    // Generate URL based on environment
+    const imageUrl = isDevelopment 
+      ? `${window.location.origin}${relativePath}`
+      : `${BASE_URL}${relativePath}`;
+      
+    console.log("Image URL for storage in database:", imageUrl);
+    
+    return {
+      imageUrl,
+      width: dimensions.width,
+      height: dimensions.height
+    };
+  } catch (error) {
+    console.error("Error processing image upload:", error);
+    throw error;
+  }
+};
+
+// Helper function to get image dimensions
+const getImageDimensions = (file: File): Promise<{width: number, height: number}> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      resolve({
+        width: img.width,
+        height: img.height
+      });
+    };
+    img.onerror = () => {
+      reject(new Error("Failed to load image for dimensions"));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+};
 
 export interface CommunityFormData {
   id?: string;
   title: string;
   description: string;
   image?: File | string;
+  imageUrl?: string; // Add explicit imageUrl field
   category?: string;
   tags?: string[];
   status?: string;
@@ -185,41 +257,40 @@ export const createCommunity = async (
   try {
     // Create a new doc reference with auto ID
     const newCommunityRef = doc(collection(db, COMMUNITY_COLLECTION));
+    const communityId = newCommunityRef.id;
 
     // Handle image upload if it's a File
-    let imageUrl = communityData.image;
+    let imageUrl = communityData.imageUrl || "";
     let imageWidth = 0;
     let imageHeight = 0;
     let localImage = false;
 
     if (communityData.image instanceof File) {
-      const file = communityData.image;
-      const storageRef = ref(
-        storage,
-        `community-images/${newCommunityRef.id}/${file.name}`
-      );
-      const uploadResult = await uploadBytes(storageRef, file);
-      imageUrl = await getDownloadURL(uploadResult.ref);
-
-      // Get image dimensions (in a real app, you might use an actual image processing library)
-      localImage = true;
-
-      // Create a temporary image element to get dimensions
-      const img = new Image();
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = URL.createObjectURL(file);
-      });
-      imageWidth = img.width;
-      imageHeight = img.height;
+      try {
+        const file = communityData.image;
+        // Process image with our local file handler
+        const uploadResult = await processLocalFile(file, communityId);
+        
+        imageUrl = uploadResult.imageUrl;
+        imageWidth = uploadResult.width;
+        imageHeight = uploadResult.height;
+        localImage = true;
+        
+        console.log("Image processed successfully. Using URL:", imageUrl);
+      } catch (uploadError) {
+        console.error("Error processing image:", uploadError);
+        // Continue with creation even if image upload fails
+        toast.error(
+          "Failed to process image, but will continue creating the post."
+        );
+      }
     }
 
     // Prepare community data with Firestore specific types
     const firebaseCommunityData: any = {
       title: communityData.title,
       description: communityData.description,
-      image: imageUrl || "",
+      image: imageUrl,
       imageWidth: imageWidth || 0,
       imageHeight: imageHeight || 0,
       localImage: localImage,
@@ -266,42 +337,26 @@ export const updateCommunity = async (
 
     // Handle image upload if it's a File
     if (communityData.image instanceof File) {
-      const file = communityData.image;
-      const storageRef = ref(
-        storage,
-        `community-images/${communityId}/${file.name}`
-      );
+      try {
+        const file = communityData.image;
+        // Process image with our local file handler
+        const uploadResult = await processLocalFile(file, communityId);
+        
+        communityData.imageUrl = uploadResult.imageUrl;
 
-      // Delete old image if it exists
-      const docSnap = await getDoc(communityRef);
-      if (docSnap.exists() && docSnap.data().image) {
-        try {
-          const oldImageRef = ref(storage, docSnap.data().image);
-          await deleteObject(oldImageRef).catch(() => {
-            // Ignore errors if old image doesn't exist
-          });
-        } catch (error) {
-          console.warn("Error deleting old image:", error);
-        }
+        // Add dimensions to update data
+        await updateDoc(communityRef, {
+          image: uploadResult.imageUrl,
+          imageWidth: uploadResult.width,
+          imageHeight: uploadResult.height,
+          localImage: true,
+        });
+      } catch (uploadError) {
+        console.error("Error processing image during update:", uploadError);
+        toast.error(
+          "Failed to process image, but will continue updating the post."
+        );
       }
-
-      const uploadResult = await uploadBytes(storageRef, file);
-      communityData.image = await getDownloadURL(uploadResult.ref);
-
-      // Get image dimensions
-      const img = new Image();
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = URL.createObjectURL(file);
-      });
-
-      // Add dimensions to update data
-      await updateDoc(communityRef, {
-        imageWidth: img.width,
-        imageHeight: img.height,
-        localImage: true,
-      });
     }
 
     // Prepare update data
@@ -314,8 +369,8 @@ export const updateCommunity = async (
       updateData.title = communityData.title;
     if (communityData.description !== undefined)
       updateData.description = communityData.description;
-    if (communityData.image && typeof communityData.image === "string")
-      updateData.image = communityData.image;
+    if (communityData.imageUrl !== undefined)
+      updateData.image = communityData.imageUrl;
     if (communityData.category !== undefined)
       updateData.category = communityData.category;
     if (communityData.tags !== undefined) updateData.tags = communityData.tags;
@@ -341,7 +396,6 @@ export const updateCommunity = async (
 export const deleteCommunity = async (communityId: string, userId: string) => {
   try {
     const communityRef = doc(db, COMMUNITY_COLLECTION, communityId);
-
     await updateDoc(communityRef, {
       isDeleted: true,
       deletedAt: serverTimestamp(),

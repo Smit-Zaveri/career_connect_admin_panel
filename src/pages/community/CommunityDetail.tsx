@@ -302,7 +302,7 @@ const CommunityDetail: React.FC = () => {
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <h1 className="text-xl font-bold text-neutral-900 md:text-2xl dark:text-white">
-            Community Post
+            Community
           </h1>
         </motion.div>
         {canEdit && (

@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../context/AuthContext";
-import { X, Loader, Upload, Tag as TagIcon } from "lucide-react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../../config/firebase";
+import {
+  X,
+  Loader,
+  Upload,
+  Tag as TagIcon,
+  Link as LinkIcon,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 export interface CommunityFormData {
@@ -57,8 +61,9 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
   const [imagePreview, setImagePreview] = useState<string | null>(
     initialData.imageUrl || null
   );
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
+  const [imageInputType, setImageInputType] = useState<"upload" | "link">(
+    initialData.imageUrl ? "link" : "upload"
+  );
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -119,6 +124,17 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
         return;
       }
 
+      // Sanitize file name to prevent issues
+      const fileNameSanitized = selectedFile.name.replace(
+        /[^a-zA-Z0-9._-]/g,
+        ""
+      );
+      if (fileNameSanitized !== selectedFile.name) {
+        console.log(
+          `Sanitized filename from ${selectedFile.name} to ${fileNameSanitized}`
+        );
+      }
+
       setFormData({
         ...formData,
         image: selectedFile,
@@ -130,6 +146,14 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(selectedFile);
+
+      console.log(
+        "Image selected for upload:",
+        selectedFile.name,
+        "Size:",
+        (selectedFile.size / 1024).toFixed(2),
+        "KB"
+      );
     }
   };
 
@@ -162,39 +186,15 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
     }
 
     try {
-      let finalData = { ...formData };
+      // The image handling is now done in the communityService
+      // We just pass along the form data and let the service handle the upload
+      await onSubmit(formData);
 
-      // If there's a new image, upload it first
-      if (formData.image) {
-        setIsUploading(true);
-
-        // Create storage reference with a unique filename
-        const timestamp = new Date().getTime();
-        const filename = `community_images/${timestamp}_${formData.image.name}`;
-        const storageRef = ref(storage, filename);
-
-        // Upload the file
-        await uploadBytes(storageRef, formData.image);
-
-        // Get the download URL
-        const downloadURL = await getDownloadURL(storageRef);
-
-        finalData = {
-          ...finalData,
-          imageUrl: downloadURL,
-        };
-
-        setIsUploading(false);
-      }
-
-      await onSubmit(finalData);
-
-      // Navigate back or show success message
-      // This will be handled in the parent component
+      // Form submission is handled by the parent component (CommunityCreate or CommunityEdit)
+      // which will handle navigation after successful submission
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to submit form. Please try again.");
-      setIsUploading(false);
     }
   };
 
@@ -355,14 +355,83 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
             >
               Post Image
             </label>
-            <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-neutral-300 px-6 py-4 dark:border-neutral-700">
-              <div className="space-y-4 text-center">
-                {imagePreview ? (
-                  <div className="space-y-2">
+
+            <div className="mb-2 flex rounded-md shadow-sm">
+              <button
+                type="button"
+                onClick={() => {
+                  setImageInputType("upload");
+                  // Clear image URL if we switch to upload
+                  if (imageInputType === "link") {
+                    setFormData({ ...formData, imageUrl: "" });
+                    setImagePreview(null);
+                  }
+                }}
+                className={`relative inline-flex items-center rounded-l-md px-4 py-2 text-sm font-medium ${
+                  imageInputType === "upload"
+                    ? "bg-primary-600 text-white"
+                    : "bg-white text-neutral-700 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                }`}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Upload
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setImageInputType("link");
+                  // Clear file upload if we switch to link
+                  if (imageInputType === "upload") {
+                    setFormData({ ...formData, image: null });
+                    if (!formData.imageUrl) {
+                      setImagePreview(null);
+                    }
+                  }
+                }}
+                className={`relative inline-flex items-center rounded-r-md px-4 py-2 text-sm font-medium ${
+                  imageInputType === "link"
+                    ? "bg-primary-600 text-white"
+                    : "bg-white text-neutral-700 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                }`}
+              >
+                <LinkIcon className="mr-2 h-4 w-4" />
+                URL
+              </button>
+            </div>
+
+            {imageInputType === "link" ? (
+              <div className="space-y-2">
+                <div className="relative">
+                  <input
+                    type="url"
+                    id="imageUrl"
+                    name="imageUrl"
+                    value={formData.imageUrl || ""}
+                    onChange={(e) => {
+                      const url = e.target.value;
+                      setFormData({ ...formData, imageUrl: url });
+                      // Update the preview with the URL
+                      setImagePreview(url || null);
+                    }}
+                    placeholder="Enter image URL (https://...)"
+                    className="block w-full rounded-md border border-neutral-300 pl-3 pr-12 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white"
+                  />
+                </div>
+                {imagePreview && (
+                  <div className="mt-2 space-y-2 rounded-md border border-neutral-300 p-2 dark:border-neutral-700">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      Preview:
+                    </p>
                     <img
                       src={imagePreview}
                       alt="Preview"
                       className="mx-auto h-40 w-auto rounded-md object-cover"
+                      onError={() => {
+                        toast.error(
+                          "Invalid image URL or image not accessible"
+                        );
+                        setImagePreview(null);
+                      }}
                     />
                     <button
                       type="button"
@@ -373,31 +442,53 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
                       Remove
                     </button>
                   </div>
-                ) : (
-                  <>
-                    <Upload className="mx-auto h-12 w-12 text-neutral-400" />
-                    <div className="flex flex-col space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
-                      <label
-                        htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md bg-white font-medium text-primary-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 hover:text-primary-500 dark:bg-neutral-900 dark:text-primary-400 dark:hover:text-primary-300"
-                      >
-                        <span>Upload an image</span>
-                        <input
-                          id="file-upload"
-                          name="file-upload"
-                          type="file"
-                          className="sr-only"
-                          onChange={handleImageChange}
-                          accept="image/*"
-                        />
-                      </label>
-                      <p>or drag and drop (PNG, JPG)</p>
-                      <p className="text-xs">Max file size: 5MB</p>
-                    </div>
-                  </>
                 )}
               </div>
-            </div>
+            ) : (
+              <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-neutral-300 px-6 py-4 dark:border-neutral-700">
+                <div className="space-y-4 text-center">
+                  {imagePreview ? (
+                    <div className="space-y-2">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="mx-auto h-40 w-auto rounded-md object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="inline-flex items-center rounded-md border border-transparent bg-error-100 px-3 py-1 text-xs font-medium text-error-700 hover:bg-error-200 dark:bg-error-900/20 dark:text-error-400 dark:hover:bg-error-900/30"
+                      >
+                        <X className="mr-1 h-3 w-3" />
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="mx-auto h-12 w-12 text-neutral-400" />
+                      <div className="flex flex-col space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
+                        <label
+                          htmlFor="file-upload"
+                          className="relative cursor-pointer rounded-md bg-white font-medium text-primary-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 hover:text-primary-500 dark:bg-neutral-900 dark:text-primary-400 dark:hover:text-primary-300"
+                        >
+                          <span>Upload an image</span>
+                          <input
+                            id="file-upload"
+                            name="file-upload"
+                            type="file"
+                            className="sr-only"
+                            onChange={handleImageChange}
+                            accept="image/*"
+                          />
+                        </label>
+                        <p>or drag and drop (PNG, JPG)</p>
+                        <p className="text-xs">Max file size: 5MB</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           <div>
@@ -431,13 +522,11 @@ const CommunityForm: React.FC<CommunityFormProps> = ({
         </button>
         <button
           type="submit"
-          disabled={isLoading || isUploading}
+          disabled={isLoading}
           className="inline-flex items-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-75 dark:bg-primary-700 dark:hover:bg-primary-600"
         >
-          {(isLoading || isUploading) && (
-            <Loader className="mr-2 h-4 w-4 animate-spin" />
-          )}
-          {isEdit ? "Update Post" : "Create Post"}
+          {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+          {isEdit ? "Update Community" : "Create Community"}
         </button>
       </div>
     </form>

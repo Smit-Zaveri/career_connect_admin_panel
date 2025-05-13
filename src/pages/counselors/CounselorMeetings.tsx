@@ -126,13 +126,7 @@ const CounselorMeetings: React.FC = () => {
       ) : meetings.length === 0 ? (
         <div className="bg-gray-100 dark:bg-neutral-800 p-6 rounded-lg text-center">
           <p>You don't have any upcoming meetings.</p>
-          <Link
-            to="/counselors"
-            className="inline-block mt-4 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600"
-          >
-            Find a Counselor
-          </Link>
-        </div>
+          </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
           {meetings.map((meeting, index) => (

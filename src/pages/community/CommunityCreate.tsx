@@ -22,16 +22,29 @@ const CommunityCreate: React.FC = () => {
     try {
       setIsLoading(true);
 
-      // Clean up tags and ensure image isn't null
+      // Log the form data for debugging
+      console.log("Submitting community post data:", {
+        ...data,
+        image: data.image
+          ? `${data.image.name} (${(data.image.size / 1024).toFixed(2)} KB)`
+          : "No image",
+        imageUrl: data.imageUrl || "No image URL",
+      });
+
+      // Clean up tags and ensure image is properly handled
       const cleanData = {
         ...data,
         tags: data.tags?.filter((t) => t.trim() !== "") || [],
-        image: data.image || undefined, // Convert null to undefined
       };
 
       // Create community in Firebase
       const result = await createCommunity(cleanData, user);
-      console.log("Community created with ID:", result.id);
+      console.log("Community created successfully with ID:", result.id);
+
+      if (result.image) {
+        console.log("Image URL for the new post:", result.image);
+      }
+
       toast.success("Community post created successfully");
 
       // Redirect to community listing page

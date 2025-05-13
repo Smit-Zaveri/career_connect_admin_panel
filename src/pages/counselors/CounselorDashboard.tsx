@@ -10,7 +10,6 @@ import {
   XCircle,
   ChevronRight,
   Video,
-  MessageCircle,
   Search,
   RefreshCw,
 } from "lucide-react";
@@ -378,12 +377,6 @@ const CounselorDashboard: React.FC = () => {
                         Set up Meeting
                       </button>
                     )}
-
-                    {/* Message button */}
-                    <button className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700">
-                      <MessageCircle className="mr-1.5 h-4 w-4" />
-                      Message
-                    </button>
                   </div>
                 </div>
               ))
@@ -449,7 +442,7 @@ const CounselorDashboard: React.FC = () => {
                 {user?.name || "Counselor Name"}
               </h3>
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                {user?.email || "smitzaveri123@gmail.com"}
+                {user?.email || "counselor@example.com"}
               </p>
               <Link
                 to="/profile"
