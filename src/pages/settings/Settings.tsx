@@ -1,21 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Bell,
-  Moon,
-  Sun,
-  Shield,
-  Globe,
-  FileText,
-  Lock,
-  Save,
-  Loader,
-  Smartphone,
-  UserPlus,
-  AlertTriangle,
-  Languages,
-  Code,
-} from "lucide-react";
+import { Bell, Moon, Sun, Shield, FileText, Loader, Save } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import toast from "react-hot-toast";
 
@@ -42,14 +27,6 @@ const Settings: React.FC = () => {
     dataSharing: false,
   });
 
-  // App settings
-  const [appSettings, setAppSettings] = useState({
-    language: "english",
-    autoplayVideos: true,
-    compactView: false,
-    enableAnalytics: true,
-  });
-
   const handleNotificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setNotificationSettings((prev) => ({
@@ -68,21 +45,6 @@ const Settings: React.FC = () => {
         : e.target.value;
 
     setPrivacySettings((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleAppSettingChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name } = e.target;
-    const value =
-      e.target instanceof HTMLInputElement && e.target.type === "checkbox"
-        ? e.target.checked
-        : e.target.value;
-
-    setAppSettings((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -182,40 +144,6 @@ const Settings: React.FC = () => {
                 <Shield className="mr-3 h-5 w-5" />
                 Privacy & Security
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const section = document.getElementById("app");
-                  if (section) {
-                    section.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }
-                }}
-                className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 text-neutral-700 hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-700"
-              >
-                <Globe className="mr-3 h-5 w-5" />
-                App Settings
-              </button>
-              <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const section = document.getElementById("danger");
-                    if (section) {
-                      section.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }
-                  }}
-                  className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 text-error-600 hover:bg-error-50 hover:shadow-sm dark:text-error-400 dark:hover:bg-error-900/20"
-                >
-                  <AlertTriangle className="mr-3 h-5 w-5" />
-                  Danger Zone
-                </button>
-              </div>
             </nav>
           </div>
         </motion.div>
@@ -473,125 +401,6 @@ const Settings: React.FC = () => {
                 >
                   <FileText className="mr-2 h-4 w-4" />
                   Download Data
-                </button>
-              </div>
-            </div>
-          </section>
-
-          {/* App Settings section */}
-          <section
-            id="app"
-            className="mt-6 rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800 scroll-mt-20"
-          >
-            <h2 className="mb-4 text-lg font-medium text-neutral-900 dark:text-white flex items-center">
-              <Globe className="mr-2 h-5 w-5" />
-              App Settings
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300 flex items-center">
-                  <Languages className="mr-2 h-4 w-4" />
-                  Languages
-                </label>
-                <select
-                  name="language"
-                  value={appSettings.language}
-                  onChange={handleAppSettingChange}
-                  className="block w-full rounded-md border border-neutral-300 py-2 px-3 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white sm:text-sm"
-                >
-                  <option value="english">English</option>
-                  <option value="spanish">Español (Spanish)</option>
-                  <option value="french">Français (French)</option>
-                  <option value="german">Deutsch (German)</option>
-                  <option value="chinese">中文 (Chinese)</option>
-                </select>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 flex items-center">
-                    <Code className="mr-2 h-4 w-4" />
-                    Compact View
-                  </h3>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                    Show more content with a compact layout
-                  </p>
-                </div>
-                <label className="relative inline-flex cursor-pointer items-center">
-                  <input
-                    type="checkbox"
-                    name="compactView"
-                    checked={appSettings.compactView}
-                    onChange={handleAppSettingChange}
-                    className="peer sr-only"
-                  />
-                  <span className="peer h-6 w-11 rounded-full bg-neutral-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-600 peer-checked:after:translate-x-full peer-focus:ring-2 peer-focus:ring-primary-300 dark:bg-neutral-600 dark:peer-focus:ring-primary-800"></span>
-                </label>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 flex items-center">
-                    <Smartphone className="mr-2 h-4 w-4" />
-                    Autoplay Videos
-                  </h3>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                    Automatically play videos when scrolling
-                  </p>
-                </div>
-                <label className="relative inline-flex cursor-pointer items-center">
-                  <input
-                    type="checkbox"
-                    name="autoplayVideos"
-                    checked={appSettings.autoplayVideos}
-                    onChange={handleAppSettingChange}
-                    className="peer sr-only"
-                  />
-                  <span className="peer h-6 w-11 rounded-full bg-neutral-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-600 peer-checked:after:translate-x-full peer-focus:ring-2 peer-focus:ring-primary-300 dark:bg-neutral-600 dark:peer-focus:ring-primary-800"></span>
-                </label>
-              </div>
-            </div>
-          </section>
-
-          {/* Danger Zone section */}
-          <section
-            id="danger"
-            className="mt-6 rounded-lg border border-error-300 bg-error-50 p-6 dark:border-error-800 dark:bg-error-900/20 scroll-mt-20"
-          >
-            <h2 className="mb-4 text-lg font-medium text-error-700 dark:text-error-400 flex items-center">
-              <AlertTriangle className="mr-2 h-5 w-5" />
-              Danger Zone
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <h3 className="mb-1 text-sm font-medium text-error-700 dark:text-error-400">
-                  Deactivate Account
-                </h3>
-                <p className="mb-3 text-xs text-error-600 dark:text-error-500">
-                  Temporarily disable your account. You can reactivate at any
-                  time.
-                </p>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-md border border-error-300 bg-white px-3 py-2 text-sm font-medium text-error-700 shadow-sm hover:bg-error-50 dark:border-error-700 dark:bg-neutral-800 dark:text-error-400 dark:hover:bg-error-900/30"
-                >
-                  Deactivate Account
-                </button>
-              </div>
-
-              <div>
-                <h3 className="mb-1 text-sm font-medium text-error-700 dark:text-error-400">
-                  Delete Account
-                </h3>
-                <p className="mb-3 text-xs text-error-600 dark:text-error-500">
-                  Permanently delete your account and all associated data. This
-                  action cannot be undone.
-                </p>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-md border border-error-300 bg-white px-3 py-2 text-sm font-medium text-error-700 shadow-sm hover:bg-error-50 dark:border-error-700 dark:bg-neutral-800 dark:text-error-400 dark:hover:bg-error-900/30"
-                >
-                  Delete Account
                 </button>
               </div>
             </div>
